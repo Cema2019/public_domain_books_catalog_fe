@@ -73,7 +73,7 @@ function App() {
         {!loading && !error && (
           <>
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-              style(frontend): remove markdown-style bold from books count display
+              Showing {books.length} book(s)
             </Typography>
             <Grid container spacing={3}>
               {books.map((book) => (
