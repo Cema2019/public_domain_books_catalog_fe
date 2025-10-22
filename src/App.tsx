@@ -73,7 +73,7 @@ function App() {
         {!loading && !error && (
           <>
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-              Showing **{books.length}** book(s)
+              Showing {books.length} book(s)
             </Typography>
             <Grid container spacing={3}>
               {books.map((book) => (
