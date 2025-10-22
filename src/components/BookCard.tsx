@@ -15,14 +15,14 @@ export const BookCard = ({ book }: BookCardProps) => {
           {book.title || "Untitled Book"}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          **Authors**: {book.authors || "Unknown"}
+          Authors: {book.authors || "Unknown"}
         </Typography>
         <Typography
           variant="body2"
           color="text.secondary"
           sx={{ mt: 1, maxHeight: 60, overflow: "hidden" }}
         >
-          **Subjects**: {book.subjects || "N/A"}
+          Subjects: {book.subjects || "N/A"}
         </Typography>
       </CardContent>
     </Card>
