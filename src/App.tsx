@@ -48,7 +48,7 @@ function App() {
         {/* Search Input */}
         <Box sx={{ my: 4, display: "flex", justifyContent: "center" }}>
           <TextField
-            label="Search by Title, Author, or Subject"
+            label="Search by Title or Author"
             variant="outlined"
             fullWidth
             value={searchTerm}
@@ -73,7 +73,7 @@ function App() {
         {!loading && !error && (
           <>
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-              Showing {books.length} book(s)
+              style(frontend): remove markdown-style bold from books count display
             </Typography>
             <Grid container spacing={3}>
               {books.map((book) => (
