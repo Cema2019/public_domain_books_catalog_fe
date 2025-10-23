@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import { useBooks } from "./hooks/useBooks";
 import { BookCard } from "./components/BookCard";
 import {
+  Box,
   Container,
   Typography,
   TextField,
-  Grid,
   CircularProgress,
   Alert,
   AppBar,
-  Toolbar,
-  Box,
+  Toolbar
 } from "@mui/material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
@@ -75,20 +74,17 @@ function App() {
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
               Showing {books.length} book(s)
             </Typography>
-            <Grid container spacing={3}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {books.map((book) => (
-                <Grid item xs={12} sm={6} md={4} key={book.id}>
-                  <BookCard book={book} />
-                </Grid>
+                <BookCard key={book.id} book={book} />
               ))}
+
               {books.length === 0 && searchTerm && (
-                <Grid item xs={12}>
-                  <Alert severity="info">
-                    No books found matching "{searchTerm}".
-                  </Alert>
-                </Grid>
+                <Alert severity="info">
+                  No books found matching "{searchTerm}".
+                </Alert>
               )}
-            </Grid>
+            </Box>
           </>
         )}
       </Container>
