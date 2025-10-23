@@ -84,7 +84,7 @@ function App() {
               {books.length === 0 && searchTerm && (
                 <Grid item xs={12}>
                   <Alert severity="info">
-                    No books found matching **"{searchTerm}"**.
+                    No books found matching "{searchTerm}".
                   </Alert>
                 </Grid>
               )}
