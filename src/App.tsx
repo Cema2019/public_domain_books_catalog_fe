@@ -16,7 +16,7 @@ import {
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 function App() {
-  const { books, loading, error, page, pages, total, fetchBooks } = useBooks();
+  const { books, loading, error, page, pages, size, total, fetchBooks } = useBooks();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Debounced search logic
@@ -25,10 +25,10 @@ function App() {
       if (searchTerm.length >= 3 || searchTerm.length === 0) {
         fetchBooks(searchTerm, 1);
       }
-    }, 500); 
+    }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]); 
+  }, [searchTerm, fetchBooks]); 
 
   return (
     <>
@@ -74,8 +74,16 @@ function App() {
         {!loading && !error && (
           <>
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-              Showing {books.length} of {total} book(s)
+              {(() => {
+                if (total === 0) {
+                  return "Showing 0 of 0 book(s)";
+                }
+                const start = (page - 1) * size + 1;
+                const end = Math.min(page * size, total);
+                return `Showing ${start} - ${end} of ${total} book(s)`;
+              })()}
             </Typography>
+
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {books.map((book) => (
                 <BookCard key={book.id} book={book} />

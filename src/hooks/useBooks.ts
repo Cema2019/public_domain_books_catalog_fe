@@ -8,6 +8,7 @@ interface UseBooksResult {
   error: string | null;
   page: number;
   pages: number;
+  size: number;
   total: number;
   fetchBooks: (searchTerm?: string, page?: number) => Promise<void>;
 }
@@ -24,8 +25,10 @@ export const useBooks = (): UseBooksResult => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  // --- Pagination State ---
   const [page, setPage] = useState<number>(1);
   const [pages, setPages] = useState<number>(1);
+  const [size, setSize] = useState<number>(20);
   const [total, setTotal] = useState<number>(0);
 
   const fetchBooks = async (searchTerm: string = "", pageNum: number = 1) => {
@@ -41,11 +44,16 @@ export const useBooks = (): UseBooksResult => {
       setBooks(response.data.items);
       setPage(response.data.page);
       setPages(response.data.pages);
+      setSize(response.data.size);
       setTotal(response.data.total);
     } catch (err) {
       console.error("Error fetching books:", err);
       setError("Failed to fetch books. Please try again.");
       setBooks([]);
+      setPage(1);
+      setPages(1);
+      setTotal(0);
+      setSize(20);
     } finally {
       setLoading(false);
     }
@@ -55,5 +63,5 @@ export const useBooks = (): UseBooksResult => {
     fetchBooks();
   }, []);
 
-  return { books, loading, error, page, pages, total, fetchBooks };
+  return { books, loading, error, page, pages, size, total, fetchBooks };
 };
