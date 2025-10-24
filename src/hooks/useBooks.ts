@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { type Book, API_BASE_URL } from "../types";
 
@@ -31,7 +31,7 @@ export const useBooks = (): UseBooksResult => {
   const [size, setSize] = useState<number>(20);
   const [total, setTotal] = useState<number>(0);
 
-  const fetchBooks = async (searchTerm: string = "", pageNum: number = 1) => {
+  const fetchBooks = useCallback(async (searchTerm: string = "", pageNum: number = 1) => {
     setLoading(true);
     setError(null);
     try {
@@ -57,11 +57,11 @@ export const useBooks = (): UseBooksResult => {
     } finally {
       setLoading(false);
     }
-  };
+    }, []);
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [fetchBooks]);
 
   return { books, loading, error, page, pages, size, total, fetchBooks };
 };
