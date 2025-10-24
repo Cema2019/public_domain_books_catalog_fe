@@ -9,19 +9,21 @@ import {
   CircularProgress,
   Alert,
   AppBar,
-  Toolbar
+  Toolbar,
+  Pagination, 
+  Stack
 } from "@mui/material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 function App() {
-  const { books, loading, error, fetchBooks } = useBooks();
+  const { books, loading, error, page, pages, total, fetchBooks } = useBooks();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Debounced search logic
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm.length >= 3 || searchTerm.length === 0) {
-        fetchBooks(searchTerm);
+        fetchBooks(searchTerm, 1);
       }
     }, 500); 
 
@@ -72,7 +74,7 @@ function App() {
         {!loading && !error && (
           <>
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-              Showing {books.length} book(s)
+              Showing {books.length} of {total} book(s)
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {books.map((book) => (
@@ -85,6 +87,18 @@ function App() {
                 </Alert>
               )}
             </Box>
+            {/* Pagination Controls */}
+            {pages > 1 && (
+              <Stack spacing={2} alignItems="center" sx={{ mt: 4, mb: 2 }}>
+                <Pagination
+                  count={pages} // Total number of pages
+                  page={page} // The current page
+                  onChange={(_, newPage) => fetchBooks(searchTerm, newPage)}
+                  color="primary"
+                  disabled={loading} // Disable while fetching
+                />
+              </Stack>
+            )}
           </>
         )}
       </Container>

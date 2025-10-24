@@ -6,7 +6,10 @@ interface UseBooksResult {
   books: Book[];
   loading: boolean;
   error: string | null;
-  fetchBooks: (searchTerm: string) => Promise<void>;
+  page: number;
+  pages: number;
+  total: number;
+  fetchBooks: (searchTerm?: string, page?: number) => Promise<void>;
 }
 
 interface PaginatedResponse {
@@ -21,18 +24,24 @@ export const useBooks = (): UseBooksResult => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [pages, setPages] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
 
-  const fetchBooks = async (searchTerm: string = "") => {
+  const fetchBooks = async (searchTerm: string = "", pageNum: number = 1) => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get<PaginatedResponse>(
         `${API_BASE_URL}/books`,
         {
-          params: { search: searchTerm },
+          params: { search: searchTerm, page: pageNum },
         }
       );
       setBooks(response.data.items);
+      setPage(response.data.page);
+      setPages(response.data.pages);
+      setTotal(response.data.total);
     } catch (err) {
       console.error("Error fetching books:", err);
       setError("Failed to fetch books. Please try again.");
@@ -46,5 +55,5 @@ export const useBooks = (): UseBooksResult => {
     fetchBooks();
   }, []);
 
-  return { books, loading, error, fetchBooks };
+  return { books, loading, error, page, pages, total, fetchBooks };
 };
