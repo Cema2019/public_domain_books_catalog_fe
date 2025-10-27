@@ -8,5 +8,4 @@ export interface Book {
 }
 
 // Backend API base URL
-export const API_BASE_URL =
-  "https://public-domain-books-catalog-be.onrender.com";
+export const API_BASE_URL = "https://public-domain-library-latest.onrender.com";
