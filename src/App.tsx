@@ -10,13 +10,17 @@ import {
   Alert,
   AppBar,
   Toolbar,
-  Pagination, 
-  Stack
+  Pagination,
+  Stack,
+  InputAdornment,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
+
 function App() {
-  const { books, loading, error, page, pages, size, total, fetchBooks } = useBooks();
+  const { books, loading, error, page, pages, size, total, fetchBooks } =
+    useBooks();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Debounced search logic
@@ -28,7 +32,7 @@ function App() {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, fetchBooks]); 
+  }, [searchTerm, fetchBooks]);
 
   return (
     <>
@@ -55,6 +59,15 @@ function App() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{ maxWidth: 600 }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon/>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Box>
 
