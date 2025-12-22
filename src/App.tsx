@@ -17,7 +17,6 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
-
 function App() {
   const { books, loading, error, page, pages, size, total, fetchBooks } =
     useBooks();
@@ -63,7 +62,7 @@ function App() {
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon/>
+                    <SearchIcon />
                   </InputAdornment>
                 ),
               },
@@ -85,7 +84,12 @@ function App() {
         )}
 
         {!loading && !error && (
-          <>
+          <Box
+            sx={{
+              maxWidth: 900,
+              mx: "auto", // center horizontally
+            }}
+          >
             <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
               {(() => {
                 if (total === 0) {
@@ -103,9 +107,16 @@ function App() {
               ))}
 
               {books.length === 0 && searchTerm && (
-                <Alert severity="info">
-                  No books found matching "{searchTerm}".
-                </Alert>
+                <Box
+                  sx={{
+                    maxWidth: 600,
+                    mx: "auto",
+                  }}
+                >
+                  <Alert severity="info">
+                    No books found matching "{searchTerm}".
+                  </Alert>
+                </Box>
               )}
             </Box>
             {/* Pagination Controls */}
@@ -120,7 +131,7 @@ function App() {
                 />
               </Stack>
             )}
-          </>
+          </Box>
         )}
       </Container>
     </>
