@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const { books, loading, error, page, pages, size, total, fetchBooks } =
@@ -134,6 +135,7 @@ function App() {
           </Box>
         )}
       </Container>
+      <Analytics />
     </>
   );
 }
