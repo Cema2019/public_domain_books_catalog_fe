@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import { Analytics } from "@vercel/analytics/react";
 
 
 function App() {
@@ -63,7 +64,7 @@ function App() {
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon/>
+                    <SearchIcon />
                   </InputAdornment>
                 ),
               },
@@ -123,6 +124,7 @@ function App() {
           </>
         )}
       </Container>
+      <Analytics />
     </>
   );
 }
