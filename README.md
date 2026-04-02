@@ -1,10 +1,10 @@
 # Public Domain Library - Frontend
 
 
-A React-based frontend application for browsing and searching public domain books. This app is connected to a FastAPI backend and provides a paginated, searchable interface for books.  
+A React-based frontend application for browsing and searching public domain books. This app is connected to a NestJS backend and provides a paginated, searchable interface for books.  
 
 **Live Demo:** [https://public-domain-books-iota.vercel.app](https://public-domain-books-iota.vercel.app)  
-**Backend Repository:** [https://github.com/Cema2019/public_domain_books_catalog_be](https://github.com/Cema2019/public_domain_books_catalog_be)  
+**Backend Repository:** [https://github.com/Cema2019/public-domain-library-api](https://github.com/Cema2019/public-domain-library-api)  
 
 ---
 
@@ -127,9 +127,9 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Backend Integration
 
-This frontend is tightly coupled with the FastAPI backend:
+This frontend is tightly coupled with the NestJS backend:
 
-- **Backend Repo:** [public_domain_books_catalog_be](https://github.com/Cema2019/public_domain_books_catalog_be)  
+- **Backend Repo:** [public-domain-library-api](https://github.com/Cema2019/public-domain-library-api)  
 - **API Endpoints Used:**  
   - `GET /books` with optional query parameters:  
     - `search` – filter by title or author  
