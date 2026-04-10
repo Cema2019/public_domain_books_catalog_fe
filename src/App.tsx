@@ -1,4 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
 import { useBooks } from "./hooks/useBooks";
 import { BookCard } from "./components/BookCard";
 import {
@@ -18,10 +22,28 @@ import SearchIcon from "@mui/icons-material/Search";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import { Analytics } from "@vercel/analytics/react";
 
+// Zod Schema for Search Form
+const searchSchema = z.object({
+  searchTerm: z.string().max(100, "Search term is too long"),
+});
+
+type SearchForm = z.infer<typeof searchSchema>;
+
 function App() {
   const { books, loading, error, page, pages, size, total, fetchBooks } =
     useBooks();
-  const [searchTerm, setSearchTerm] = useState("");
+
+  // React Hook Form setup
+  const { control, watch } = useForm<SearchForm>({
+    resolver: zodResolver(searchSchema),
+    defaultValues: {
+      searchTerm: "",
+    },
+    mode: "onChange",
+  });
+
+  // Watch the searchTerm value from RHF
+  const searchTerm = watch("searchTerm");
 
   // Debounced search logic
   useEffect(() => {
@@ -33,6 +55,10 @@ function App() {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, fetchBooks]);
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
+    fetchBooks(searchTerm, newPage); // Keep current searchTerm when changing page
+  };
 
   return (
     <>
@@ -50,40 +76,49 @@ function App() {
           Browse Public Domain Books
         </Typography>
 
-        {/* Search Input */}
+        {/* Search Input with RHF + Controller */}
         <Box sx={{ my: 4, display: "flex", justifyContent: "center" }}>
-          <TextField
-            label="Search by Title or Author"
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{ maxWidth: 600 }}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              },
-            }}
+          <Controller
+            name="searchTerm"
+            control={control}
+            render={({ field, fieldState: { error: fieldError } }) => (
+              <TextField
+                {...field}
+                label="Search by Title or Author"
+                variant="outlined"
+                fullWidth
+                sx={{ maxWidth: 600 }}
+                error={!!fieldError}
+                helperText={fieldError?.message}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            )}
           />
         </Box>
 
-        {/* Loading, Error, and Results */}
+        {/* Loading */}
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />
           </Box>
         )}
 
+        {/* Error */}
         {error && (
           <Alert severity="error" sx={{ mt: 2 }}>
             {error}
           </Alert>
         )}
 
+        {/* Results */}
         {!loading && !error && (
           <Box
             sx={{
@@ -126,7 +161,7 @@ function App() {
                 <Pagination
                   count={pages} // Total number of pages
                   page={page} // The current page
-                  onChange={(_, newPage) => fetchBooks(searchTerm, newPage)}
+                  onChange={handlePageChange}
                   color="primary"
                   disabled={loading} // Disable while fetching
                 />
