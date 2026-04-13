@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useDebounce } from "use-debounce";
 
 import { useBooks } from "./hooks/useBooks";
 import { BookCard } from "./components/BookCard";
@@ -30,8 +31,7 @@ const searchSchema = z.object({
 type SearchForm = z.infer<typeof searchSchema>;
 
 function App() {
-  const { books, loading, error, page, pages, size, total, fetchBooks } =
-    useBooks();
+  const [page, setPage] = useState(1);
 
   // React Hook Form setup
   const { control, watch } = useForm<SearchForm>({
@@ -45,19 +45,22 @@ function App() {
   // Watch the searchTerm value from RHF
   const searchTerm = watch("searchTerm");
 
-  // Debounced search logic
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (searchTerm.length >= 3 || searchTerm.length === 0) {
-        fetchBooks(searchTerm, 1);
-      }
-    }, 500);
+  // ✅ Debounced value (clean)
+  const [debouncedSearch] = useDebounce(searchTerm, 500);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, fetchBooks]);
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
+  const { data, isLoading, isError } = useBooks(debouncedSearch, page);
+
+  const books = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const pages = data?.pages ?? 1;
+  const size = data?.size ?? 20;
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
-    fetchBooks(searchTerm, newPage); // Keep current searchTerm when changing page
+    setPage(newPage);
   };
 
   return (
@@ -81,15 +84,15 @@ function App() {
           <Controller
             name="searchTerm"
             control={control}
-            render={({ field, fieldState: { error: fieldError } }) => (
+            render={({ field, fieldState }) => (
               <TextField
                 {...field}
                 label="Search by Title or Author"
                 variant="outlined"
                 fullWidth
                 sx={{ maxWidth: 600 }}
-                error={!!fieldError}
-                helperText={fieldError?.message}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -105,21 +108,21 @@ function App() {
         </Box>
 
         {/* Loading */}
-        {loading && (
+        {isLoading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />
           </Box>
         )}
 
         {/* Error */}
-        {error && (
+        {isError && (
           <Alert severity="error" sx={{ mt: 2 }}>
-            {error}
+            Failed to fetch books.
           </Alert>
         )}
 
         {/* Results */}
-        {!loading && !error && (
+        {!isLoading && !isError && (
           <Box
             sx={{
               maxWidth: 900,
@@ -142,7 +145,7 @@ function App() {
                 <BookCard key={book.id} book={book} />
               ))}
 
-              {books.length === 0 && searchTerm && (
+              {books.length === 0 && debouncedSearch && (
                 <Box
                   sx={{
                     maxWidth: 600,
@@ -150,7 +153,7 @@ function App() {
                   }}
                 >
                   <Alert severity="info">
-                    No books found matching "{searchTerm}".
+                    No books found matching "{debouncedSearch}".
                   </Alert>
                 </Box>
               )}
@@ -163,7 +166,7 @@ function App() {
                   page={page} // The current page
                   onChange={handlePageChange}
                   color="primary"
-                  disabled={loading} // Disable while fetching
+                  disabled={isLoading} // Disable while fetching
                 />
               </Stack>
             )}
@@ -176,3 +179,4 @@ function App() {
 }
 
 export default App;
+
